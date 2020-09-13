@@ -2,6 +2,7 @@ package com.londonappbrewery.climapm;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -112,6 +113,9 @@ public class WeatherController extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Clima", "Request was a success!\n\n" + response.toString());
+
+                WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
+                updateUI(weatherData);
             }
 
             @Override
@@ -143,11 +147,16 @@ public class WeatherController extends AppCompatActivity {
         }
     }
 
-    // TODO: Add getWeatherForNewCity(String city) here:
+    private void updateUI(WeatherDataModel weatherData) {
+        mTemperatureLabel.setText(weatherData.getTemperature());
+        mCityLabel.setText(weatherData.getCity());
 
-    // TODO: Add updateUI() here:
+        int resId = getResources().getIdentifier(weatherData.getIconName(), "drawable", getPackageName());
+        mWeatherImage.setImageResource(resId);
+    }
 
     // TODO: Add onPause() here:
+    // TODO: Add getWeatherForNewCity(String city) here:
 
 
 }
