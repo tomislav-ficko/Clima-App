@@ -18,7 +18,8 @@ public class WeatherDataModel {
             weatherData.mCondition = jsonObject.getJSONArray("weather")
                     .getJSONObject(0)
                     .getInt("id");
-            weatherData.mIconName = updateWeatherIcon(weatherData.mCondition);
+            weatherData.mIconName = getIconName(weatherData.mCondition);
+
             int temperature = (int) Math.round(jsonObject.getJSONObject("main").getDouble("temp") - 273.15);
             weatherData.mTemperature = String.valueOf(temperature);
 
@@ -30,7 +31,7 @@ public class WeatherDataModel {
         }
     }
 
-    private static String updateWeatherIcon(int condition) {
+    private static String getIconName(int condition) {
 
         if (condition >= 0 && condition < 300) {
             return "tstorm1";

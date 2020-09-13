@@ -32,9 +32,9 @@ public class WeatherController extends AppCompatActivity {
     final int REQUEST_CODE = 123;
     final String BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
     final String APP_ID = BuildConfig.APP_ID;
-    // Time between location updates in milliseconds
+    // Time between location updates in milliseconds (5 s)
     final long MIN_TIME = 5000;
-    // Distance between location updates in meters
+    // Distance between location updates in meters (1 km)
     final float MIN_DISTANCE = 1000;
     String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
 
@@ -49,6 +49,7 @@ public class WeatherController extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_controller_layout);
+        Log.d("Clima", "onCreate called");
 
         mCityLabel = (TextView) findViewById(R.id.locationTV);
         mWeatherImage = (ImageView) findViewById(R.id.weatherSymbolIV);
@@ -67,17 +68,19 @@ public class WeatherController extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("Clima", "onResume called");
+
         Intent intent = getIntent();
         String city = intent.getStringExtra("City");
 
         if (city != null) {
-            getWeatherForNewCity(city);
+            getWeatherForCity(city);
         } else {
             getWeatherForCurrentLocation();
         }
     }
 
-    private void getWeatherForNewCity(String cityName) {
+    private void getWeatherForCity(String cityName) {
         RequestParams params = new RequestParams();
         params.put("q", cityName);
         params.put("appid", APP_ID);
@@ -86,11 +89,16 @@ public class WeatherController extends AppCompatActivity {
 
     private void getWeatherForCurrentLocation() {
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        mLocationListener = new LocationListener() {
+        mLocationListener = createLocationListener();
+        checkPermission();
+        mLocationManager.requestLocationUpdates(LOCATION_PROVIDER, MIN_TIME, MIN_DISTANCE, mLocationListener);
+    }
+
+    private LocationListener createLocationListener() {
+        return new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
-                Log.d("Clima", "Location changed");
                 String longitude = String.valueOf(location.getLongitude());
                 String latitude = String.valueOf(location.getLatitude());
 
@@ -99,6 +107,7 @@ public class WeatherController extends AppCompatActivity {
                 params.put("lon", longitude);
                 params.put("appid", APP_ID);
                 executeNetworkCall(params);
+                Log.d("Clima", "Call executed");
             }
 
             @Override
@@ -108,17 +117,14 @@ public class WeatherController extends AppCompatActivity {
 
             @Override
             public void onProviderEnabled(String s) {
-
+                Log.d("Clima","Provider enabled");
             }
 
             @Override
             public void onProviderDisabled(String s) {
-                Log.d("Clima", "Location access has been turned off");
+                Log.d("Clima", "Provider disabled, location access has been turned off");
             }
         };
-
-        checkPermission();
-        mLocationManager.requestLocationUpdates(LOCATION_PROVIDER, MIN_TIME, MIN_DISTANCE, mLocationListener);
     }
 
     private void executeNetworkCall(RequestParams params) {
@@ -126,8 +132,8 @@ public class WeatherController extends AppCompatActivity {
         client.get(BASE_URL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("Clima", "Request was a success!\n\n" + response.toString());
 
+                // create data using the static method inside the Model
                 WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
                 updateUI(weatherData);
             }
@@ -135,14 +141,14 @@ public class WeatherController extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject response) {
                 Log.d("Clima", "Request failed: " + e.toString());
-                Toast.makeText(WeatherController.this, "Request failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WeatherController.this, "Problem with network", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
         }
     }
@@ -165,6 +171,7 @@ public class WeatherController extends AppCompatActivity {
         mTemperatureLabel.setText(weatherData.getTemperature());
         mCityLabel.setText(weatherData.getCity());
 
+        // change picture based on its name inside the drawable folder
         int resId = getResources().getIdentifier(weatherData.getIconName(), "drawable", getPackageName());
         mWeatherImage.setImageResource(resId);
     }
@@ -172,8 +179,10 @@ public class WeatherController extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("Clima", "onPause called");
 
         if (mLocationManager != null) {
+            // stop listening in the background if the activity is being paused
             mLocationManager.removeUpdates(mLocationListener);
         }
     }

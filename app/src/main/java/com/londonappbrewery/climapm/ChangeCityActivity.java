@@ -23,6 +23,7 @@ public class ChangeCityActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // close the activity
                 finish();
             }
         });
@@ -32,9 +33,10 @@ public class ChangeCityActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
 
                 String newCity = editTextField.getText().toString();
-                Intent newCityIntent = new Intent(ChangeCityActivity.this, WeatherController.class);
-                newCityIntent.putExtra("City", newCity);
-                startActivity(newCityIntent);
+                // pass info to main activity
+                Intent showCityWeatherIntent = new Intent(ChangeCityActivity.this, WeatherController.class);
+                showCityWeatherIntent.putExtra("City", newCity);
+                startActivity(showCityWeatherIntent);
 
                 return false;
             }
