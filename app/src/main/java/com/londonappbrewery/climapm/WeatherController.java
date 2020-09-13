@@ -58,7 +58,8 @@ public class WeatherController extends AppCompatActivity {
         changeCityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(WeatherController.this, ChangeCityActivity.class);
+                startActivity(intent);
             }
         });
     }
