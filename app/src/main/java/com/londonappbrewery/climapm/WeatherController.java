@@ -9,21 +9,17 @@ import android.widget.TextView;
 
 public class WeatherController extends AppCompatActivity {
 
-    // Constants:
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
-    // App ID to use OpenWeather data
-    final String APP_ID = "e72____PLEASE_REPLACE_ME_____13";
-    // Time between location updates (5000 milliseconds or 5 seconds)
+    final String APP_ID = "9a31aa82b36ae80e9bba5a0528a0e179";
+    // Time between location updates in milliseconds
     final long MIN_TIME = 5000;
-    // Distance between location updates (1000m or 1km)
+    // Distance between location updates in meters
     final float MIN_DISTANCE = 1000;
 
     // TODO: Set LOCATION_PROVIDER here:
 
 
 
-
-    // Member Variables:
     TextView mCityLabel;
     ImageView mWeatherImage;
     TextView mTemperatureLabel;
