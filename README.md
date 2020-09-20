@@ -5,5 +5,5 @@ Weather app made using OpenWeatherMap's API, created as part of the Android Java
 Important things used while making this app:<br/>
 • MVC design pattern for separating data model from controller<br/>
 • Location permissions for fetching device location<br/>
-• JSONObject and AsyncHttpClient for communication with OpenWeatherMap API<br/>
+• Retrofit and Gson for communication with the OpenWeatherMap API<br/>
 • Intents to move between activities (and Extras to share data between them)
