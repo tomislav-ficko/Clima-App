@@ -1,45 +1,36 @@
 package com.londonappbrewery.climapm;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class ChangeCityActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.change_city_layout);
+        setContentView(R.layout.activity_change_city);
 
-        final EditText editTextField = (EditText) findViewById(R.id.queryET);
+        final EditText editTextField = findViewById(R.id.queryET);
         ImageView backButton = (ImageButton) findViewById(R.id.backButton);
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // close the activity
-                finish();
-            }
+        backButton.setOnClickListener(view -> {
+            // Close the activity
+            finish();
         });
 
-        editTextField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+        editTextField.setOnEditorActionListener((textView, actionId, event) -> {
 
-                String newCity = editTextField.getText().toString();
-                // pass info to main activity
-                Intent showCityWeatherIntent = new Intent(ChangeCityActivity.this, WeatherController.class);
-                showCityWeatherIntent.putExtra("City", newCity);
-                startActivity(showCityWeatherIntent);
+            String newCity = editTextField.getText().toString();
+            // Pass info to main activity
+            Intent showCityWeatherIntent = new Intent(ChangeCityActivity.this, WeatherController.class);
+            showCityWeatherIntent.putExtra("City", newCity);
+            startActivity(showCityWeatherIntent);
 
-                return false;
-            }
+            return false;
         });
     }
 }

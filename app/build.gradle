@@ -20,11 +20,18 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'APP_ID', OpenWeatherMap_ApplicationId
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
 }

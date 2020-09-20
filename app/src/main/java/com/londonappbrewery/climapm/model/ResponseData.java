@@ -1,35 +1,24 @@
-package com.londonappbrewery.climapm;
+package com.londonappbrewery.climapm.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
-public class WeatherDataModel {
+public class ResponseData {
 
-    private String mTemperature;
+    @SerializedName("main")
+    private Main mMain;
+
+    @SerializedName("name")
     private String mCity;
-    private String mIconName;
-    private int mCondition;
 
-    public static WeatherDataModel fromJson(JSONObject jsonObject) {
+    @SerializedName("weather")
+    private Weather[] mWeather;
 
-        try {
-            WeatherDataModel weatherData = new WeatherDataModel();
-            weatherData.mCity = jsonObject.getString("name");
-            weatherData.mCondition = jsonObject.getJSONArray("weather")
-                    .getJSONObject(0)
-                    .getInt("id");
-            weatherData.mIconName = getIconName(weatherData.mCondition);
+    @SerializedName("sys")
+    private Sys mSys;
 
-            int temperature = (int) Math.round(jsonObject.getJSONObject("main").getDouble("temp") - 273.15);
-            weatherData.mTemperature = String.valueOf(temperature);
+    @SerializedName("wind")
+    private Wind mWind;
 
-            return weatherData;
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            return null;
-        }
-    }
 
     private static String getIconName(int condition) {
 
@@ -63,7 +52,8 @@ public class WeatherDataModel {
     }
 
     public String getTemperature() {
-        return mTemperature + "°";
+        int temperature = (int) Math.round(mMain.getTemperature() - 273.15);
+        return String.valueOf(temperature);
     }
 
     public String getCity() {
@@ -71,6 +61,22 @@ public class WeatherDataModel {
     }
 
     public String getIconName() {
-        return mIconName;
+        return getIconName(mWeather[0].getConditionCode());
+    }
+
+    public Long getSunriseTime() {
+        return mSys.getSunriseTime();
+    }
+
+    public Long getSunsetTime() {
+        return mSys.getSunsetTime();
+    }
+
+    public Float getWindSpeed() {
+        return mWind.getWindSpeed();
+    }
+
+    public int getWindDirection() {
+        return mWind.getWindDirection();
     }
 }
